@@ -7,44 +7,20 @@ public class ProductsController:ControllerBase
     private readonly IProductReadRepository _productReadRepository;
     private readonly IProductWriteRepository _productWriteRepository;
 
-    public ProductsController(IProductReadRepository productReadRepository, IProductWriteRepository productWriteRepository)
+    private readonly IOrderWriteRepository _orderWriteRepository;
+
+    public ProductsController(IProductReadRepository productReadRepository, IProductWriteRepository productWriteRepository, IOrderWriteRepository orderWriteRepository)
     {
         _productReadRepository = productReadRepository;
         _productWriteRepository = productWriteRepository;
+        _orderWriteRepository = orderWriteRepository;
     }
     [HttpGet]
 
     public async Task Get()
     {
-        await _productWriteRepository.AddRangeAsync(new List<Product>
-        {
-            new Product
-            {
-                Id = Guid.NewGuid(),
-                Name = "Product 1",
-                Price = 100,
-                Stock = 10,
-                CreatedDate=DateTime.UtcNow,
-            },
-            new Product
-            {
-                Id = Guid.NewGuid(),
-                Name = "Product 2",
-                Price = 200,
-                Stock = 20,
-                CreatedDate=DateTime.UtcNow,
-            },
-            new Product
-            {
-                Id = Guid.NewGuid(),
-                Name = "Product 3",
-                Price = 300,
-                Stock = 30,
-                CreatedDate=DateTime.UtcNow,
-            },
-          
-        });
-
-        await _productWriteRepository.SaveAsync();
+        await _orderWriteRepository.AddAsync(new () { Description = "Test Order", Address = "Test Address",});
+        await _orderWriteRepository.AddAsync(new () { Description = "Test Order 2", Address = "Test Address 2",});
+        await _orderWriteRepository.SaveAsync();
     }
 }
