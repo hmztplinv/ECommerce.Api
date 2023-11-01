@@ -16,9 +16,10 @@ public class ReadRepository<T> : IReadRepository<T> where T : BaseEntity
         return Table;
     }
 
-    public Task<T?> GetByIdAsync(string id)
+    public async Task<T?> GetByIdAsync(string id)
     {
-        return Table.FirstOrDefaultAsync(x => x.Id == Guid.Parse(id));
+        // return Table.FirstOrDefaultAsync(x => x.Id == Guid.Parse(id));
+        return await Table.FindAsync(Guid.Parse(id));
     }
 
     public async Task<T?> GetSingleAsync(Expression<Func<T, bool>> predicate)
