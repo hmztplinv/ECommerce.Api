@@ -7,7 +7,8 @@ public static class ServiceRegistration
     {
         services.AddDbContext<ECommerceDbContext>(options =>
         {
-            options.UseNpgsql("UserID=postgres;Password=3330;Host=localhost;Port=5432;Database=ecommerceDb;");
+            // options.UseNpgsql("UserID=postgres;Password=3330;Host=localhost;Port=5432;Database=ecommerceDb;");
+            options.UseNpgsql(DesignTimeConfiguration.GetConnectionString);
         });
     }
 }
