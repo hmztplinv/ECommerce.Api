@@ -19,8 +19,8 @@ public class ProductsController:ControllerBase
 
     public async Task Get()
     {
-        await _orderWriteRepository.AddAsync(new () { Description = "Test Order", Address = "Test Address",});
-        await _orderWriteRepository.AddAsync(new () { Description = "Test Order 2", Address = "Test Address 2",});
-        await _orderWriteRepository.SaveAsync();
+        // await _orderWriteRepository.AddAsync(new () { Description = "Test Order", Address = "Test Address",});
+        // await _orderWriteRepository.AddAsync(new () { Description = "Test Order 2", Address = "Test Address 2",});
+        // await _orderWriteRepository.SaveAsync();
     }
 }
