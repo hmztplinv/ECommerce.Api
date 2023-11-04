@@ -1,4 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 
 [ApiController]
 [Route("api/[controller]")]
@@ -7,20 +9,69 @@ public class ProductsController:ControllerBase
     private readonly IProductReadRepository _productReadRepository;
     private readonly IProductWriteRepository _productWriteRepository;
 
-    private readonly IOrderWriteRepository _orderWriteRepository;
-
-    public ProductsController(IProductReadRepository productReadRepository, IProductWriteRepository productWriteRepository, IOrderWriteRepository orderWriteRepository)
+    public ProductsController(IProductReadRepository productReadRepository, IProductWriteRepository productWriteRepository)
     {
         _productReadRepository = productReadRepository;
         _productWriteRepository = productWriteRepository;
-        _orderWriteRepository = orderWriteRepository;
     }
-    [HttpGet]
 
-    public async Task Get()
+    [HttpGet]
+    public async Task<IActionResult> Get()
     {
-        // await _orderWriteRepository.AddAsync(new () { Description = "Test Order", Address = "Test Address",});
-        // await _orderWriteRepository.AddAsync(new () { Description = "Test Order 2", Address = "Test Address 2",});
-        // await _orderWriteRepository.SaveAsync();
+        return Ok(await _productReadRepository.GetAll(false).ToListAsync());
+    }
+
+    [HttpGet("{id}")]
+    public async Task<IActionResult> Get(string id)
+    {
+        var product = await _productReadRepository.GetByIdAsync(id.ToString(),false);
+        if (product == null)
+        {
+            return NotFound();
+        }
+        return Ok(product);
+    }
+
+
+    [HttpPost]
+    public async Task<IActionResult> Post(ViewModelCreateProduct product)
+    {
+        await _productWriteRepository.AddAsync(new ()
+        {
+            Name = product.Name,
+            Price = product.Price,
+            Stock = product.Stock
+        });
+        await _productWriteRepository.SaveAsync();
+        return StatusCode(201);
+    }
+
+    [HttpPut]
+    public async Task<IActionResult> Put(ViewModelUpdateProduct product)
+    {
+        var productToUpdate = await _productReadRepository.GetByIdAsync(product.Id!.ToString());
+        if (productToUpdate == null)
+        {
+            return NotFound();
+        }
+        productToUpdate.Name = product.Name;
+        productToUpdate.Price = product.Price;
+        productToUpdate.Stock = product.Stock;
+        // _productWriteRepository.Update(productToUpdate);
+        await _productWriteRepository.SaveAsync();
+        return NoContent();
+    }
+
+    [HttpDelete("{id}")]
+    public async Task<IActionResult> Delete(string id)
+    {
+        var productToDelete = await _productReadRepository.GetByIdAsync(id.ToString());
+        if (productToDelete == null)
+        {
+            return NotFound();
+        }
+        _productWriteRepository.Remove(productToDelete);
+        await _productWriteRepository.SaveAsync();
+        return NoContent();
     }
 }
