@@ -36,6 +36,10 @@ public class ProductsController:ControllerBase
     [HttpPost]
     public async Task<IActionResult> Post(ViewModelCreateProduct product)
     {
+        if (!ModelState.IsValid)
+        {
+            return BadRequest(ModelState);
+        }
         await _productWriteRepository.AddAsync(new ()
         {
             Name = product.Name,
